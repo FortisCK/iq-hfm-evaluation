@@ -41,12 +41,32 @@ jobs:
         
     - name: 📁 Prepare deployment directory
       run: |
+        echo "=== Current directory contents ==="
+        ls -lah
+        echo "=== Creating deploy directory ==="
         mkdir -p deploy
-        cp -r * deploy/ 2>/dev/null || true
+        echo "=== Copying files ==="
+        # Copy all files and directories, but handle errors gracefully
+        for item in *; do
+          if [ "$item" != "deploy" ]; then
+            echo "Copying $item..."
+            cp -r "$item" deploy/ || echo "Failed to copy $item, continuing..."
+          fi
+        done
+        echo "=== Cleaning up git-related files ==="
         cd deploy
         rm -rf .git .github .gitattributes 2>/dev/null || true
-        echo "=== Deployment directory contents ==="
-        ls -lah deploy/models/
+        cd ..
+        echo "=== Verifying deployment directory ==="
+        ls -lah deploy/
+        if [ -d "deploy/models" ]; then
+          echo "=== Models directory contents ==="
+          ls -lah deploy/models/
+        else
+          echo "WARNING: models directory not found in deploy/"
+          echo "Available directories:"
+          find deploy/ -type d
+        fi
         
     - name: 📤 Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
