@@ -5,25 +5,31 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+# Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+permissions:
+  contents: read
+  pages: write      # to deploy to Pages
+  id-token: write   # to verify the deployment originates from an appropriate source
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
     - name: 🛎️ Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch all history for .GitInfo and .Lastmod
         lfs: true       # Fetch LFS files
         
     - name: ❌ Turn off LFS and remove Git metadata
       run: |
-        git lfs uninstall
-        rm -rf .git
-        rm .gitattributes
+        git lfs uninstall || true
+        rm -rf .git || true
+        rm .gitattributes || true
         
     - name: 🚀 Deploy to gh-pages branch
-      uses: peaceiris/actions-gh-pages@v3.9.0
+      uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./
