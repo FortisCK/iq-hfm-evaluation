@@ -5,34 +5,48 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
-# Grant GITHUB_TOKEN the permissions required to make a Pages deployment
 permissions:
   contents: read
-  pages: write      # to deploy to Pages
-  id-token: write   # to verify the deployment originates from an appropriate source
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-    - name: 🛎️ Checkout
+    - name: 🛎️ Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Fetch all history for .GitInfo and .Lastmod
-        lfs: true       # Fetch LFS files
+        lfs: false  # We'll handle LFS manually
         
-    - name: ❌ Turn off LFS and remove Git metadata
+    - name: 📦 Setup Git LFS
       run: |
-        git lfs uninstall || true
-        rm -rf .git || true
-        rm .gitattributes || true
+        git lfs install
+        git lfs pull
         
-    - name: 🚀 Deploy to gh-pages branch
-      uses: peaceiris/actions-gh-pages@v3
+    - name: 🔍 List LFS files
+      run: |
+        echo "LFS files:"
+        git lfs ls-files
+        echo "File sizes:"
+        find models/ -name "*.obj" -o -name "*.ply" -o -name "*.png" -o -name "*.mtl" | xargs ls -lh
+        
+    - name: 📁 Prepare deployment directory
+      run: |
+        mkdir -p deploy
+        cp -r * deploy/ 2>/dev/null || true
+        cd deploy
+        rm -rf .git .github .gitattributes 2>/dev/null || true
+        
+    - name: 📤 Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        publish_branch: gh-pages
-        user_name: "github-actions[bot]"
-        user_email: "github-actions[bot]@users.noreply.github.com" 
+        path: deploy/
+        
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4 
