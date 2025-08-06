@@ -1,0 +1,12 @@
+# 排除大模型文件
+*.obj
+*.ply
+*.png
+*.mtl
+
+# 但保留目录结构
+!models/
+!models/README.md
+
+# 其他
+.DS_Store 

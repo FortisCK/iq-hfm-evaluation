@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ-HFM专家评价系统</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 页头 -->
+        <header class="header">
+            <h1>IQ-HFM 跨模态面部重建专家评价系统</h1>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+                <span class="progress-text" id="progressText">案例 1 / 5</span>
+            </div>
+        </header>
+
+        <!-- 主评价区域 -->
+        <div class="evaluation-area" id="evaluationArea">
+            <!-- 案例信息 -->
+            <div class="case-info">
+                <h2 id="caseTitle">案例 1</h2>
+                <p class="case-description">
+                    下方展示了通过IQ-HFM方法重建的3D面部模型。
+                    请结合原始CBCT数据和2D照片，对重建结果进行评价。
+                </p>
+            </div>
+
+            <!-- 三个3D模型查看器 -->
+            <div class="viewer-section">
+                <div class="model-viewer">
+                    <h3>原始CBCT切片（3D）</h3>
+                    <div id="cbctContainer" class="model-container"></div>
+                    <div class="viewer-controls">
+                        <p>CBCT数据的3D重建</p>
+                    </div>
+                </div>
+                
+                <div class="model-viewer">
+                    <h3>真实3dMD人脸扫描</h3>
+                    <div id="faceScanContainer" class="model-container"></div>
+                    <div class="viewer-controls">
+                        <p>真实面部3D扫描数据</p>
+                    </div>
+                </div>
+                
+                <div class="model-viewer">
+                    <h3>IQ-HFM重建结果</h3>
+                    <div id="iqhfmContainer" class="model-container"></div>
+                    <div class="viewer-controls">
+                        <p>跨模态融合重建模型</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comparison-note">
+                <p><strong>评价说明：</strong>请对比三个模型，重点评价IQ-HFM重建结果相比单纯CBCT重建的改进效果，以及与真实3dMD扫描的一致性。</p>
+            </div>
+
+            <!-- 评价表单 -->
+            <div class="evaluation-form">
+                <h3>专家评价</h3>
+                <form id="ratingForm">
+                    <!-- 专家信息 -->
+                    <div class="expert-info-section">
+                        <div class="form-group">
+                            <label for="clinicalExperience">临床经验 (年):</label>
+                            <input type="number" id="clinicalExperience" name="clinicalExperience" min="1" max="50" placeholder="请输入您的临床经验年数" required>
+                        </div>
+                    </div>
+                    <!-- 几何精度评分 -->
+                    <div class="rating-group">
+                        <label for="geometryAccuracy">几何精度 (GA) - 保持CBCT精度同时面部比例的自然程度:</label>
+                        <div class="slider-container">
+                            <input type="range" id="geometryAccuracy" name="geometryAccuracy" min="1" max="5" value="3" step="1">
+                            <div class="slider-labels">
+                                <span>1 (很差)</span>
+                                <span>2 (较差)</span>
+                                <span>3 (中等)</span>
+                                <span>4 (较好)</span>
+                                <span>5 (很好)</span>
+                            </div>
+                            <div class="slider-value" id="gaValue">3</div>
+                        </div>
+                    </div>
+
+                    <!-- 视觉真实感评分 -->
+                    <div class="rating-group">
+                        <label for="visualRealism">视觉真实感 (VR) - 相比纯CBCT重建的视觉提升程度:</label>
+                        <div class="slider-container">
+                            <input type="range" id="visualRealism" name="visualRealism" min="1" max="5" value="3" step="1">
+                            <div class="slider-labels">
+                                <span>1 (很差)</span>
+                                <span>2 (较差)</span>
+                                <span>3 (中等)</span>
+                                <span>4 (较好)</span>
+                                <span>5 (很好)</span>
+                            </div>
+                            <div class="slider-value" id="vrValue">3</div>
+                        </div>
+                    </div>
+
+                    <!-- 临床价值评分 -->
+                    <div class="rating-group">
+                        <label for="clinicalValue">临床价值 (CV) - 对临床工作的帮助程度:</label>
+                        <div class="slider-container">
+                            <input type="range" id="clinicalValue" name="clinicalValue" min="1" max="5" value="3" step="1">
+                            <div class="slider-labels">
+                                <span>1 (很差)</span>
+                                <span>2 (较差)</span>
+                                <span>3 (中等)</span>
+                                <span>4 (较好)</span>
+                                <span>5 (很好)</span>
+                            </div>
+                            <div class="slider-value" id="cvValue">3</div>
+                        </div>
+                    </div>
+
+                    <!-- 二元判断 -->
+                    <div class="binary-questions">
+                        <h4>临床应用评价:</h4>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="diagnostic" id="diagnostic">
+                                适合用于诊断分析
+                            </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="communication" id="communication">
+                                有助于与患者沟通
+                            </label>
+                        </div>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" name="planning" id="planning">
+                                有价值的手术规划
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 可选评论 -->
+                    <div class="comment-section">
+                        <label for="comments">补充意见 (可选):</label>
+                        <textarea id="comments" name="comments" rows="3" placeholder="如有其他意见或建议，请在此填写..."></textarea>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="form-actions">
+                        <button type="button" id="prevBtn" class="btn-secondary" style="display: none;">上一个案例</button>
+                        <button type="submit" id="submitBtn" class="btn-primary">提交评价</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 完成页面 -->
+        <div class="completion-area" id="completionArea" style="display: none;">
+            <h2>评价完成</h2>
+            <p>感谢您的专业评价！您的数据已保存。</p>
+            <div class="download-section">
+                <button id="downloadBtn" class="btn-primary">下载评价数据</button>
+                <p class="download-note">管理员可下载所有专家的评价结果</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本文件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PLYLoader.js"></script>
+    <script src="js/evaluation.js"></script>
+</body>
+</html> 

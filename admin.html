@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ-HFM评价系统 - 管理员页面</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>IQ-HFM评价系统 - 管理员页面</h1>
+            <nav class="admin-nav">
+                <a href="index.html">返回评价页面</a>
+            </nav>
+        </header>
+
+        <main class="admin-main">
+            <!-- 数据统计 -->
+            <section class="stats-section">
+                <h2>评价数据统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>完成评价数</h3>
+                        <div class="stat-number" id="totalEvaluations">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>评价会话数</h3>
+                        <div class="stat-number" id="totalExperts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>平均评分</h3>
+                        <div class="stat-number" id="averageScore">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>数据完整性</h3>
+                        <div class="stat-number" id="dataIntegrity">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 专家评价汇总 -->
+            <section class="results-section">
+                <h2>专家评价汇总</h2>
+                <div class="controls">
+                    <button id="loadDataBtn" class="btn-primary">加载评价数据</button>
+                    <button id="exportDataBtn" class="btn-secondary">导出所有数据</button>
+                    <button id="clearDataBtn" class="btn-danger">清除所有数据</button>
+                </div>
+                
+                <!-- 评分统计表 -->
+                <div class="score-summary">
+                    <h3>评分统计 (平均值 ± 标准差)</h3>
+                    <table class="summary-table" id="scoreSummaryTable">
+                        <thead>
+                            <tr>
+                                <th>评价维度</th>
+                                <th>平均分</th>
+                                <th>标准差</th>
+                                <th>中位数</th>
+                                <th>范围</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>几何精度 (GA)</td>
+                                <td id="ga-mean">-</td>
+                                <td id="ga-std">-</td>
+                                <td id="ga-median">-</td>
+                                <td id="ga-range">-</td>
+                            </tr>
+                            <tr>
+                                <td>视觉真实感 (VR)</td>
+                                <td id="vr-mean">-</td>
+                                <td id="vr-std">-</td>
+                                <td id="vr-median">-</td>
+                                <td id="vr-range">-</td>
+                            </tr>
+                            <tr>
+                                <td>临床价值 (CV)</td>
+                                <td id="cv-mean">-</td>
+                                <td id="cv-std">-</td>
+                                <td id="cv-median">-</td>
+                                <td id="cv-range">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 二元判断统计 -->
+                <div class="binary-summary">
+                    <h3>临床应用认可度</h3>
+                    <div class="binary-stats">
+                        <div class="binary-stat">
+                            <h4>适合诊断</h4>
+                            <div class="percentage" id="diagnostic-percentage">-</div>
+                        </div>
+                        <div class="binary-stat">
+                            <h4>有助沟通</h4>
+                            <div class="percentage" id="communication-percentage">-</div>
+                        </div>
+                        <div class="binary-stat">
+                            <h4>有价值规划</h4>
+                            <div class="percentage" id="planning-percentage">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 详细评价数据 -->
+                <div class="expert-details">
+                    <h3>详细评价数据</h3>
+                    <div class="expert-tabs">
+                        <button class="tab-btn active" onclick="showExpert('all')">所有评价</button>
+                    </div>
+                    <div class="expert-data" id="expertDataTable">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>经验年数</th>
+                                    <th>案例</th>
+                                    <th>GA</th>
+                                    <th>VR</th>
+                                    <th>CV</th>
+                                    <th>诊断</th>
+                                    <th>沟通</th>
+                                    <th>规划</th>
+                                    <th>评价时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expertTableBody">
+                                <tr>
+                                    <td colspan="9">暂无数据，请点击"加载评价数据"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 评价评论 -->
+                <div class="comments-section">
+                    <h3>评价评论</h3>
+                    <div id="expertsComments">
+                        <p>暂无评论数据</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ICC计算结果 -->
+            <section class="reliability-section">
+                <h2>评价者间一致性 (ICC)</h2>
+                <div class="icc-results">
+                    <div class="icc-stat">
+                        <h4>ICC值</h4>
+                        <div class="icc-value" id="icc-value">-</div>
+                    </div>
+                    <div class="icc-stat">
+                        <h4>95% CI</h4>
+                        <div class="icc-ci" id="icc-ci">-</div>
+                    </div>
+                    <div class="icc-stat">
+                        <h4>p值</h4>
+                        <div class="icc-p" id="icc-p">-</div>
+                    </div>
+                    <div class="icc-interpretation">
+                        <h4>解释</h4>
+                        <div id="icc-interpretation">-</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html> 
