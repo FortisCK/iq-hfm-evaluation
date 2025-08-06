@@ -18,22 +18,26 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-    - name: 🛎️ Checkout repository
+    - name: 🛎️ Checkout repository with LFS
       uses: actions/checkout@v4
       with:
-        lfs: false  # We'll handle LFS manually
+        lfs: true  # Enable LFS
         
-    - name: 📦 Setup Git LFS
+    - name: 🔍 Debug LFS status
       run: |
-        git lfs install
-        git lfs pull
-        
-    - name: 🔍 List LFS files
-      run: |
-        echo "LFS files:"
+        echo "=== Git LFS Status ==="
+        git lfs --version
+        git lfs env
         git lfs ls-files
-        echo "File sizes:"
-        find models/ -name "*.obj" -o -name "*.ply" -o -name "*.png" -o -name "*.mtl" | xargs ls -lh
+        echo "=== Checking model file sizes ==="
+        ls -lah models/
+        echo "=== Check if files are LFS pointers ==="
+        head -5 models/subject_001_3dmd.obj || echo "File not found"
+        head -5 models/subject_001_cbct.obj || echo "File not found"  
+        head -5 models/subject_001_iqhfm.ply || echo "File not found"
+        echo "=== File types ==="
+        file models/subject_001_3dmd.obj || echo "File not found"
+        file models/subject_001_iqhfm.ply || echo "File not found"
         
     - name: 📁 Prepare deployment directory
       run: |
@@ -41,6 +45,8 @@ jobs:
         cp -r * deploy/ 2>/dev/null || true
         cd deploy
         rm -rf .git .github .gitattributes 2>/dev/null || true
+        echo "=== Deployment directory contents ==="
+        ls -lah deploy/models/
         
     - name: 📤 Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
